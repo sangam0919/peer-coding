@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signup</title>
+</head>
+<body>
+    <%- include('header') %>
+    <form id = "signup_form">
+        <label for="">아이디</label>
+        <input type="text" name = "uid">
+        <label for="">비밀번호</label>
+        <input type="text" name = "upw">
+        <label for="">이름</label>
+        <input type="text" name = "name">
+        <label for="">닉네임</label>
+        <input type="text" name = "nick">
+        <label for="">성별</label>
+        <input type="text" name = "gender">
+        <label for="">프로필사진</label>
+        <input type="file" name = "profile_path">
+        <button>회원가입</button>
+    </form>
+</body>
+    <script>
+        signup_form.onsubmit = async(e)=> {
+            e.preventDefault();
+            console.log("회원가입 버튼 눌렸어")
+            const {uid,upw,name,nick,gender,profile_path} = e.target;
+            console.log(uid.value)
+            const form = new FormData();
+            form.append("uid", uid.value)
+            form.append("upw", upw.value)
+            form.append("name", name.value )
+            form.append("nick", nick.value)
+            form.append("gender", gender.value)
+            form.append("image", profile_path.files[0]);
+            console.log(form)
+
+            const data = await axios.post("/signup", form,{
+                headers : {"Content-type" : "multipart/form-data"}
+            })
+
+            console.log("signup data : ", data)
+        }
+    </script>
+</html>

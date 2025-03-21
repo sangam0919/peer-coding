@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <%- include('header') %>
+    <% for (let i = 0; i < boards.length; i++) { %>
+        <li>No : <%= boards[i].board_id %></li>
+        <li></li>
+        <li><a href="/detail/<%= boards[i].board_id %>"><%= boards[i].title %></a></li>
+        <li>작성자 UID: <%= boards[i].uid %></li> 
+        <li>
+            <!-- 이미지 출력 -->
+            <img src="<%= boards[i].image_path %>" alt="Image" width="100">
+        </li>
+        <li>내용 : <%= boards[i].content %></li>
+         
+    <% } %>
+</body>
+</html>
