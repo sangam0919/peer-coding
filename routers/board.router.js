@@ -23,7 +23,7 @@ router.post('/write', loginToken, upload.single('image'), async (req, res) => {
     const { path } = req.file
     const { uid } = req.user; 
     console.log(" 로그인한 사용자 uid:", uid);
-    const data = await write(title, content, uid , "/" + path);
+    const data = await write(uid,title, content , "/" + path);
     console.log(data);
     res.json(data);
 });
