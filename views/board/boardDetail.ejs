@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href='/public/css/detail.css'>
+</head>
+<body>
+    <%- include('header') %>
+    <div id="detail_form">
+    <h1>No :<%= board.board_id %></h1>
+    <p>제목 :<%= board.title %></p>
+    <p>글쓴이:<%= board.uid %></p>
+    <p>내용 : <%= board.content %></p>
+    <p><img src="<%= board.image_path %>" alt="게시글 이미지" width="300"></p>
+    <!-- <button onclick="editbtn('<%= board.id %>')">수정</button> -->
+    <a href="/edit/<%= board.board_id %>">수정하기</a>
+    <button onclick="deletebtn('<%= board.board_id %>')">삭제</button>
+    <a href="/">뒤로가기</a>
+
+    <div id="comments">
+        <div class="comment_list">
+        <h2>댓글</h2>
+        <% if (comments && comments.length > 0) { %>
+            <% for (let i = 0; i < comments.length; i++) { %>
+                <form id="commentlist_form">
+                <ul>
+                    <li>작성자:<%= comments[i].uid %></li>
+                   <li>댓글 내용 : <%= comments[i].comment %></li>
+                  
+                </ul>
+            </form>
+            <% } %>
+        <% } else { %>
+            <p>댓글이 없습니다.</p>
+        <% } %>
+    </div>
+
+           
+           <form id="comment_form">
+            <textarea name="comment" placeholder="댓글을 작성하세요"></textarea>
+            <button>댓글 추가</button>
+        </form>
+    </div>
+    </div>
+</body>
+<script>
+    //  commentlist_form.onsubmit = async (comment) => {
+    //     try {
+    //         const { comment : value } = e.target
+    //         await axios.post('/comdelete',)
+    //     } catch (error) {
+            
+    //     }
+    // }
+     const deletebtn = async (board_id) => {
+    try {
+        console.log(board_id)
+        const data = await axios.post('/delete', { board_id });
+        if (data.status === 200) {
+            window.location.href = '/board';
+        }
+    } catch (error) {
+        console.error("삭제 실패:", error);
+    }
+};
+
+comment_form.onsubmit = async (e) => {
+        e.preventDefault();
+        const comment = e.target.comment.value; 
+        const board_id = '<%= board.board_id %>'; 
+
+        try {
+            const { data } = await axios.post('/comment', { comment, board_id });
+            if (data.state === 200) {
+                location.reload(); 
+            } else {
+                console.log("댓글 추가 실패:", data.message);
+            }
+        } catch (error) {
+            console.error("댓글 추가 실패:", error);
+        }
+    };
+</script>
+</html>
