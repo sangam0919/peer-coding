@@ -78,7 +78,6 @@ const searchImage = async (uid) => {
 const deleteUser = async (uid) => {
     try {
         const data = await connectPool.query("DELETE FROM user WHERE uid = ?" ,[uid])
-        console.log("delete data :", data);
         return data
     } catch (error) {
         return error

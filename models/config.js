@@ -90,9 +90,14 @@ const likeaaTableInit = async () => {
         console.log("likeaa 테이블 생성 완료")
     }  
 }
-userTableInit()
-boardTableInit()
-commentTableInit()
-likeaaTableInit()
+
+const init = async ()=>{
+    await userTableInit()
+    await boardTableInit()
+    await commentTableInit()
+    await likeaaTableInit()
+}
+
+init();
 
 module.exports = connectPool;

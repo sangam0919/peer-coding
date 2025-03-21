@@ -1,6 +1,6 @@
 const fs = require("fs").promises;
 const router = require("express").Router();
-const { signup, loginToken, login, userEditNick, userEditImage, deleteImage } = require("../controllers/login.controller");
+const { signup, loginToken, login, userEditNick, userEditImage, deleteImage, userDelete } = require("../controllers/login.controller");
 const {upload} = require("../lib/user.upload");
 const { searchImage } = require("../models/user");
 
@@ -95,7 +95,7 @@ router.post("/editImage", loginToken, upload.single("image"), async (req,res)=> 
 router.post("/delete",loginToken, async(req,res) => {
     const {uid} = req.user;
     const data = userDelete(uid)
-    console.log("server data result", userDelete)
+    //console.log("server data result", data)
 })
 
 module.exports = router;
