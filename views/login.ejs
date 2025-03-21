@@ -29,7 +29,7 @@
         const data = await axios.post("/login" , {uid:uidValue, upw:upwValue})
         
         if (data.status === 200) {
-            location.href ="/main"
+            location.href ="/mypage"
         }
         console.log("login data :", data)
     }

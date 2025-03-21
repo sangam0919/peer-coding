@@ -5,7 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mypage</title>
 </head>
+<style>
+#items{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+img {
+    width: 400px;
+}
+
+#editNick_input{
+    display: none;
+}
+#nickEditOk_btn{
+    display: none;
+}
+#error_message{
+    display: none;
+    color: red;
+}
+#profile_path {
+    display: none;
+}
+#confirm_btn{
+    display: none;
+}
+</style>
 <body>
     <%- include('header') %>
+    <div id = "items">
+        <h1>내정보</h1>
+        <div> 아이디 : <%= uid %> </div>
+        <div> 이름 : <%= name %> </div>
+        <div> 닉네임 : <%= nick %> <button id = "editNick_btn">닉네임 수정</button> <input type="text" id = "editNick_input"> <button id="nickEditOk_btn">확인</button> <div id = "error_message">중복된 닉네임입니다.</div> </div>
+        <div> 성별 : <%= gender %> </div>
+        <div> 프로필 이미지 : <img src="<%= profile_path %>" alt=""></div>
+        <div><button id = "eidt_profile_image">프로필 이미지 변경</button> <input type="file" id = "profile_path"> <button id = "confirm_btn">변경 확인</button></div>
+    </div>
+
 </body>
+<script>
+    document.getElementById("editNick_btn").addEventListener("click", ()=> {
+        editNick_input.style.display = "inline-block"
+        nickEditOk_btn.style.display = "inline-block"
+    })
+    
+    // 확인 버튼 눌렀을떄 이벤트
+    nickEditOk_btn.addEventListener("click", async()=> {
+        const editNick = editNick_input.value;
+        
+        console.log(editNick);
+
+        const data = await axios.post("/editnick", {editNick});
+        console.log("data", data)
+
+        if (data.data.changedRows===1){
+        const nickText = document.querySelector('#items div:nth-child(4)').childNodes[0];
+        nickText.nodeValue = `닉네임 : ${editNick} `;
+        
+        // 입력 필드 숨기기
+        editNick_input.style.display = "none";
+        nickEditOk_btn.style.display = "none";
+        }
+
+        if (data.data.state===400){
+            error_message.style.display = "inline-block"
+        }
+
+
+    })
+
+    eidt_profile_image.addEventListener("click", async()=> {
+        profile_path.style.display ="inline-block"
+        confirm_btn.style.display = "inline-block"
+    })
+
+    confirm_btn.addEventListener("click", async()=>{
+        //const imagePath = profile_path.value;
+        //console.log("imagePath", imagePath);
+        const form = new FormData();
+        form.append("image", profile_path.files[0]);;
+
+        const data = await axios.post("editImage", form, {headers :  {"Content-type" : "multipart/form-data"}});
+        console.log("client edit image data : ", data)
+
+        if (data.status ===200){
+            console.log("수정이미지 업로드 성공") 
+            const imgElement = document.querySelector('#items img');
+            imgElement.src = data.data.path;
+            profile_path.style.display = "none";
+            confirm_btn.style.display = "none";
+            profile_path.value = '';
+        }
+    })
+
+</script>
 </html>

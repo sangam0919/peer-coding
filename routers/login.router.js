@@ -1,6 +1,8 @@
+const fs = require("fs").promises;
 const router = require("express").Router();
-const { signup, loginToken, login } = require("../controllers/login.controller");
+const { signup, loginToken, login, userEditNick, userEditImage, deleteImage } = require("../controllers/login.controller");
 const {upload} = require("../lib/user.upload");
+const { searchImage } = require("../models/user");
 
 //------------------ 프론트
 
@@ -16,8 +18,10 @@ router.get("/signup", (req,res)=> {
 
 
 // 마이페이지
-router.get("/myPage", loginToken, (req,res)=> {
-    res.render("mypage")
+router.get("/mypage", loginToken, (req,res)=> {
+    // console.log(req.user)
+    const {uid,name,nick,gender,profile_path} = req.user
+    res.render("mypage", {uid,name,nick,gender,profile_path});
 })
 
 //--------------------- 백엔드
@@ -50,6 +54,48 @@ router.post("/signup", upload.single('image'), async (req,res) => {
         return {state:400, message:"서버오류"}
     }
 
+})
+
+// 닉네임 수정 라우터
+router.post("/editnick",loginToken, async(req,res)=> {
+    const {editNick} =  req.body
+    const {uid} = req.user
+
+    //console.log("newnick : ", editNick, "nick :", uid);
+    const data = await userEditNick(editNick,uid);
+    //console.log("edit data server", data)
+    res.json(data);
+})
+
+// 프로필사진 수정 라우터
+router.post("/editImage", loginToken, upload.single("image"), async (req,res)=> {
+    try {
+        const { uid } = req.user;
+
+        const { path: newPath } = req.file;
+
+        const existingUser = await searchImage(uid);
+        const oldImagePath = existingUser?.profile_path;
+        const updateResult = await userEditImage(newPath, uid);
+
+        await fs.unlink(oldImagePath); 
+
+
+        res.json({ path: newPath, data: updateResult });
+        
+    } catch (error) {
+        console.log("editImage 오류:", error);
+        res.status(500).json({ state: 400, message: "서버 오류" });
+    }
+});
+
+
+
+// 유저 삭제 라우터
+router.post("/delete",loginToken, async(req,res) => {
+    const {uid} = req.user;
+    const data = userDelete(uid)
+    console.log("server data result", userDelete)
 })
 
 module.exports = router;

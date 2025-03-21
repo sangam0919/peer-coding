@@ -38,8 +38,50 @@ const userSelectFromNick = async (nick) => {
         return error;
     }
 }
-// 유저 수정
+
+// 닉네임 수정
+const EditNick = async (editNick,uid) => {
+    try {
+        const [data] = await connectPool.query('UPDATE user SET nick = ? WHERE uid = ?', [editNick, uid])
+        console.log("user.js data:", data)
+        return data;
+    } catch (error) {
+        return error
+    }
+}
+
+// 프로필사진 수정
+const editProfile = async (editFileName, uid) => {
+    try {
+        const [data] = await connectPool.query('UPDATE user SET profile_path= ? WHERE uid = ?', [editFileName, uid]);
+        console.log("user.js file", data)
+        return data;
+    } catch (error) {
+        return error;
+    }
+}
+
+// 프로필사진 조회
+const searchImage = async (uid) => {
+    try {
+        const [[data]] = await connectPool.query('SELECT profile_path FROM user WHERE uid = ?', [uid]);
+        //console.log("searchimage data:",data);
+        return data;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
+
 
 // 유저 삭제
-
-module.exports = {createUser, userSelectFromUid, userSelectFromNick};
+const deleteUser = async (uid) => {
+    try {
+        const data = await connectPool.query("DELETE FROM user WHERE uid = ?" ,[uid])
+        console.log("delete data :", data);
+        return data
+    } catch (error) {
+        return error
+    }
+}
+module.exports = {createUser, userSelectFromUid, userSelectFromNick, EditNick, deleteUser, editProfile, searchImage};
